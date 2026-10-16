@@ -176,9 +176,13 @@ fun GrmMainScreen(
                 }
 
                 Spacer(Modifier.height(20.dp))
-                ServersHeader(
-                    title = uiState.groups.firstOrNull { it.id == groupId }?.remarks.orEmpty(),
-                    count = rows.size,
+                val group = uiState.groups.firstOrNull { it.id == groupId }
+                SubscriptionCard(
+                    title = group?.remarks.orEmpty(),
+                    serverCount = rows.size,
+                    used = group?.trafficUsed ?: -1,
+                    total = group?.trafficTotal ?: -1,
+                    expireAt = group?.expireAt ?: -1,
                     onUpdate = { onAction(MainAction.UpdateSubscriptions) },
                 )
                 if (uiState.groups.size > 1) {
@@ -452,45 +456,150 @@ private fun StatTile(
 }
 
 @Composable
-private fun ServersHeader(title: String, count: Int, onUpdate: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+private fun SubscriptionCard(
+    title: String,
+    serverCount: Int,
+    used: Long,
+    total: Long,
+    expireAt: Long,
+    onUpdate: () -> Unit,
+) {
+    val shape = RoundedCornerShape(20.dp)
+    val hasTraffic = used >= 0 || total > 0
+    val unlimited = total == 0L
+    val fraction = if (total > 0 && used >= 0) (used.toFloat() / total).coerceIn(0f, 1f) else 0f
+    val barColors = if (fraction > 0.9f) {
+        listOf(GrmColors.Pink, GrmColors.PinkText)
+    } else {
+        listOf(GrmColors.Green, GrmColors.Cyan)
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(GrmColors.Card)
+            .border(1.dp, GrmColors.CardBorder, shape)
+            .padding(start = 14.dp, top = 12.dp, end = 6.dp, bottom = 14.dp),
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = if (title.isBlank()) stringResource(R.string.grm_servers) else title,
-                color = GrmColors.TextPrimary,
-                fontFamily = GrmFonts.Display,
-                fontSize = 16.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = stringResource(R.string.grm_servers_count, count),
-                color = GrmColors.TextSecondary,
-                fontFamily = GrmFonts.Mono,
-                fontSize = 11.sp,
-                modifier = Modifier.padding(top = 2.dp),
-            )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(GrmColors.Green.copy(alpha = 0.14f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_grm_link),
+                    contentDescription = null,
+                    tint = GrmColors.Green,
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 12.dp),
+            ) {
+                Text(
+                    text = title.ifBlank { stringResource(R.string.grm_my_subscription) },
+                    color = GrmColors.TextPrimary,
+                    fontFamily = GrmFonts.Body,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = stringResource(R.string.grm_servers_count, serverCount),
+                    color = GrmColors.TextSecondary,
+                    fontFamily = GrmFonts.Mono,
+                    fontSize = 11.sp,
+                    modifier = Modifier.padding(top = 2.dp),
+                )
+            }
+            val label = stringResource(R.string.grm_update_subscription)
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .clickable(role = Role.Button, onClickLabel = label, onClick = onUpdate),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_grm_refresh),
+                    contentDescription = label,
+                    tint = GrmColors.Cyan,
+                )
+            }
         }
-        val label = stringResource(R.string.grm_update_subscription)
-        Box(
-            modifier = Modifier
-                .size(44.dp)
-                .clip(RoundedCornerShape(14.dp))
-                .clickable(role = Role.Button, onClickLabel = label, onClick = onUpdate),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_grm_refresh),
-                contentDescription = label,
-                tint = GrmColors.Cyan,
-            )
+
+        if (hasTraffic || expireAt >= 0) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp, end = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                if (hasTraffic) {
+                    val usedText = formatTraffic(if (used >= 0) used else 0)
+                    val totalText = if (unlimited) stringResource(R.string.grm_traffic_unlimited) else formatTraffic(total)
+                    Text(
+                        text = "$usedText / $totalText",
+                        color = GrmColors.TextPrimary,
+                        fontFamily = GrmFonts.Mono,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                    )
+                } else {
+                    Spacer(Modifier.size(1.dp))
+                }
+                if (expireAt >= 0) {
+                    Text(
+                        text = if (expireAt == 0L) {
+                            stringResource(R.string.grm_no_expiry)
+                        } else {
+                            stringResource(R.string.grm_until, formatDate(expireAt))
+                        },
+                        color = GrmColors.TextSecondary,
+                        fontFamily = GrmFonts.Mono,
+                        fontSize = 12.sp,
+                    )
+                }
+            }
+        }
+        if (hasTraffic && !unlimited) {
+            Box(
+                modifier = Modifier
+                    .padding(top = 8.dp, end = 8.dp)
+                    .fillMaxWidth()
+                    .height(6.dp)
+                    .clip(RoundedCornerShape(50))
+                    .background(Color.White.copy(alpha = 0.12f)),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(fraction)
+                        .height(6.dp)
+                        .clip(RoundedCornerShape(50))
+                        .background(Brush.horizontalGradient(barColors)),
+                )
+            }
         }
     }
 }
+
+private fun formatTraffic(bytes: Long): String {
+    val gb = bytes / (1024.0 * 1024.0 * 1024.0)
+    return when {
+        gb >= 100 -> String.format(java.util.Locale.US, "%.0f GB", gb)
+        gb >= 1 -> String.format(java.util.Locale.US, "%.1f GB", gb).replace(".0 GB", " GB")
+        else -> String.format(java.util.Locale.US, "%.0f MB", bytes / (1024.0 * 1024.0))
+    }
+}
+
+private fun formatDate(unixSeconds: Long): String =
+    java.text.SimpleDateFormat("dd.MM.yyyy", java.util.Locale.getDefault())
+        .format(java.util.Date(unixSeconds * 1000))
 
 @Composable
 private fun GroupChip(text: String, selected: Boolean, onClick: () -> Unit) {

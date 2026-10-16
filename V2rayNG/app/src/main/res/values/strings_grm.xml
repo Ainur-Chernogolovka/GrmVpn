@@ -37,4 +37,8 @@
     <string name="grm_ping_failed" translatable="false">нет связи</string>
     <string name="grm_empty_title" translatable="false">Подписки пока нет</string>
     <string name="grm_empty_text" translatable="false">Добавь ссылку подписки, и серверы появятся здесь</string>
+    <string name="grm_my_subscription" translatable="false">Моя подписка</string>
+    <string name="grm_traffic_unlimited" translatable="false">∞</string>
+    <string name="grm_until" translatable="false">до %1$s</string>
+    <string name="grm_no_expiry" translatable="false">бессрочно</string>
 </resources>

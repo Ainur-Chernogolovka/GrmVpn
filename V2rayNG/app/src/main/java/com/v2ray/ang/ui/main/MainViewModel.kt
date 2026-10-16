@@ -453,7 +453,13 @@ class MainViewModel(
                     cacheMutex.withLock { groupDataCache.clear() }
                 }
                 val groups = dataSource.getSubscriptions().map {
-                    GroupMapItem(id = it.guid, remarks = it.subscription.remarks)
+                    GroupMapItem(
+                        id = it.guid,
+                        remarks = it.subscription.remarks,
+                        trafficUsed = it.subscription.trafficUsed,
+                        trafficTotal = it.subscription.trafficTotal,
+                        expireAt = it.subscription.expireAt,
+                    )
                 }
                 val selectedGroup = resolveSelectedGroup(groups)
                 val validIds = groups.mapTo(HashSet()) { it.id }
