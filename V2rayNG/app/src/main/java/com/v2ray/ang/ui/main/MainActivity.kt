@@ -100,7 +100,7 @@ class MainActivity : HelperBaseComponentActivity() {
     @Composable
     override fun ScreenContent() {
         BackHandler { moveTaskToBack(false) }
-        MainScreen(
+        GrmMainScreen(
             mainViewModel = mainViewModel,
             onAction = { action ->
                 when (action) {
@@ -119,7 +119,6 @@ class MainActivity : HelperBaseComponentActivity() {
                     else -> mainViewModel.onAction(action)
                 }
             },
-            onNavigate = { route -> navigateTo(route) },
         )
     }
 

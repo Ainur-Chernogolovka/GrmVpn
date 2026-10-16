@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="grm_title_prefix" translatable="false">GRAMESTOS</string>
+    <string name="grm_title_suffix" translatable="false"> VPN</string>
+    <string name="grm_tagline" translatable="false">// ПРИВАТНОСТЬ · СВОБОДА · БЕЗ ГРАНИЦ</string>
+    <string name="grm_tagline_on" translatable="false">// ТУННЕЛЬ АКТИВЕН</string>
+    <string name="grm_status_off" translatable="false">НЕ ПОДКЛЮЧЕНО</string>
+    <string name="grm_status_on" translatable="false">ПОДКЛЮЧЕНО</string>
+    <string name="grm_ip_label" translatable="false">ВАШ IP</string>
+    <string name="grm_ip_visible" translatable="false">Виден</string>
+    <string name="grm_ip_hidden" translatable="false">Скрыт</string>
+    <string name="grm_state_label" translatable="false">СТАТУС</string>
+    <string name="grm_state_off" translatable="false">Офлайн</string>
+    <string name="grm_state_on" translatable="false">Онлайн</string>
+    <string name="grm_protocol_label" translatable="false">ПРОТОКОЛ</string>
+    <string name="grm_add_subscription" translatable="false">ДОБАВИТЬ ПОДПИСКУ</string>
+    <string name="grm_add_hint" translatable="false">вставь ссылку или отсканируй QR-код</string>
+    <string name="grm_sheet_title" translatable="false">Добавить подписку</string>
+    <string name="grm_sheet_sub" translatable="false">// ссылка подписки, QR-код или конфиг</string>
+    <string name="grm_link_label" translatable="false">ССЫЛКА ПОДПИСКИ</string>
+    <string name="grm_link_placeholder" translatable="false">https://…</string>
+    <string name="grm_from_clipboard" translatable="false">Из буфера</string>
+    <string name="grm_scan_qr" translatable="false">Сканер QR</string>
+    <string name="grm_add" translatable="false">ДОБАВИТЬ</string>
+    <string name="grm_sheet_note" translatable="false">название, трафик и срок подтянутся из подписки сами</string>
+    <string name="grm_servers" translatable="false">СЕРВЕРЫ</string>
+    <string name="grm_servers_count" translatable="false">Серверов: %1$d</string>
+    <string name="grm_update_subscription" translatable="false">Обновить подписку</string>
+    <string name="grm_test_ping" translatable="false">Проверить пинг</string>
+    <string name="grm_remove_all" translatable="false">Удалить все серверы</string>
+    <string name="grm_menu" translatable="false">Меню</string>
+    <string name="grm_close" translatable="false">Закрыть</string>
+    <string name="grm_power_on_desc" translatable="false">Включить VPN</string>
+    <string name="grm_power_off_desc" translatable="false">Отключить VPN</string>
+    <string name="grm_ping_ms" translatable="false">%1$d мс</string>
+    <string name="grm_ping_unknown" translatable="false">—</string>
+    <string name="grm_ping_failed" translatable="false">нет связи</string>
+    <string name="grm_empty_title" translatable="false">Подписки пока нет</string>
+    <string name="grm_empty_text" translatable="false">Добавь ссылку подписки, и серверы появятся здесь</string>
+</resources>
