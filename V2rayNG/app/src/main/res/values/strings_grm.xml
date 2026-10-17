@@ -13,9 +13,12 @@
     <string name="grm_state_off" translatable="false">Офлайн</string>
     <string name="grm_state_on" translatable="false">Онлайн</string>
     <string name="grm_protocol_label" translatable="false">ПРОТОКОЛ</string>
-    <string name="grm_add_subscription" translatable="false">ДОБАВИТЬ ПОДПИСКУ</string>
+    <string name="grm_ip_note" translatable="false">&gt; ваш реальный IP виден_</string>
+    <string name="grm_joke_line" translatable="false">&gt; Мусора могут вас хлопнуть</string>
+    <string name="grm_disconnect" translatable="false">ОТКЛЮЧИТЬ\n(если вы купили граместос)</string>
+    <string name="grm_add_subscription" translatable="false">ДОБАВИТЬ ПОДПИСКУ\nи покупать граместос</string>
     <string name="grm_add_hint" translatable="false">вставь ссылку или отсканируй QR-код</string>
-    <string name="grm_sheet_title" translatable="false">Добавить подписку</string>
+    <string name="grm_sheet_title" translatable="false">Добавить подписку\nИ покупать граместос!</string>
     <string name="grm_sheet_sub" translatable="false">// ссылка подписки, QR-код или конфиг</string>
     <string name="grm_link_label" translatable="false">ССЫЛКА ПОДПИСКИ</string>
     <string name="grm_link_placeholder" translatable="false">https://…</string>

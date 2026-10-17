@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
@@ -217,6 +218,13 @@ fun GrmMainScreen(
                     }
                 }
                 Spacer(Modifier.height(20.dp))
+                if (connected) {
+                    GrmDisconnectButton(
+                        text = stringResource(R.string.grm_disconnect),
+                        onClick = { onAction(MainAction.ToggleService) },
+                    )
+                    Spacer(Modifier.height(10.dp))
+                }
                 GrmOutlinedButton(
                     text = stringResource(R.string.grm_add_subscription),
                     iconRes = R.drawable.ic_grm_link,
@@ -406,17 +414,73 @@ private fun StatusBlock(
             fontSize = 22.sp,
             letterSpacing = 3.sp,
         )
+        if (connected) {
+            Text(
+                text = detail,
+                color = GrmColors.TextSecondary,
+                fontFamily = GrmFonts.Mono,
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .clickable(onClick = onDetailClick)
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+            )
+        } else {
+            Column(
+                modifier = Modifier.padding(top = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = stringResource(R.string.grm_ip_note),
+                    color = GrmColors.TextSecondary,
+                    fontFamily = GrmFonts.Mono,
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center,
+                )
+                Text(
+                    text = stringResource(R.string.grm_joke_line),
+                    color = GrmColors.TextSecondary,
+                    fontFamily = GrmFonts.Mono,
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 2.dp),
+                )
+            }
+        }
+    }
+}
+
+/** Label of a button: the first line is the action, a second line (after \n) is smaller. */
+@Composable
+private fun TwoLineLabel(
+    text: String,
+    color: Color,
+    firstSize: androidx.compose.ui.unit.TextUnit,
+    secondSize: androidx.compose.ui.unit.TextUnit,
+    letterSpacing: androidx.compose.ui.unit.TextUnit,
+    modifier: Modifier = Modifier,
+) {
+    val lines = text.split('\n', limit = 2)
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = detail,
-            color = GrmColors.TextSecondary,
-            fontFamily = GrmFonts.Mono,
-            fontSize = 12.sp,
+            text = lines[0],
+            color = color,
+            fontFamily = GrmFonts.Display,
+            fontSize = firstSize,
+            letterSpacing = letterSpacing,
             textAlign = TextAlign.Center,
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .clickable(onClick = onDetailClick)
-                .padding(horizontal = 8.dp, vertical = 4.dp),
         )
+        if (lines.size > 1) {
+            Text(
+                text = lines[1],
+                color = color,
+                fontFamily = GrmFonts.Display,
+                fontSize = secondSize,
+                letterSpacing = letterSpacing,
+                textAlign = TextAlign.Center,
+            )
+        }
     }
 }
 
@@ -709,13 +773,12 @@ private fun GrmPrimaryButton(text: String, iconRes: Int, onClick: () -> Unit, mo
                 modifier = Modifier.size(22.dp),
             )
         }
-        Text(
+        TwoLineLabel(
             text = text,
             color = GrmColors.Ink,
-            fontFamily = GrmFonts.Display,
-            fontSize = 17.sp,
+            firstSize = 17.sp,
+            secondSize = 12.sp,
             letterSpacing = 1.4.sp,
-            textAlign = TextAlign.Center,
             modifier = Modifier.weight(1f),
         )
     }
@@ -727,11 +790,12 @@ private fun GrmOutlinedButton(text: String, iconRes: Int, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .heightIn(min = 56.dp)
             .clip(shape)
             .background(GrmColors.Card)
             .border(1.5.dp, GrmColors.Green.copy(alpha = 0.8f), shape)
-            .clickable(role = Role.Button, onClick = onClick),
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
@@ -741,11 +805,44 @@ private fun GrmOutlinedButton(text: String, iconRes: Int, onClick: () -> Unit) {
             tint = GrmColors.Green,
             modifier = Modifier.size(20.dp),
         )
-        Text(
+        TwoLineLabel(
             text = text,
             color = GrmColors.Green,
-            fontFamily = GrmFonts.Display,
-            fontSize = 15.sp,
+            firstSize = 15.sp,
+            secondSize = 11.sp,
+            letterSpacing = 1.2.sp,
+            modifier = Modifier.padding(start = 10.dp),
+        )
+    }
+}
+
+/** Red outlined button that switches the VPN off; shown only while connected. */
+@Composable
+private fun GrmDisconnectButton(text: String, onClick: () -> Unit) {
+    val shape = RoundedCornerShape(28.dp)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 56.dp)
+            .clip(shape)
+            .background(GrmColors.Pink.copy(alpha = 0.14f))
+            .border(1.5.dp, GrmColors.Pink, shape)
+            .clickable(role = Role.Button, onClick = onClick)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_grm_power),
+            contentDescription = null,
+            tint = GrmColors.PinkText,
+            modifier = Modifier.size(20.dp),
+        )
+        TwoLineLabel(
+            text = text,
+            color = GrmColors.PinkText,
+            firstSize = 15.sp,
+            secondSize = 11.sp,
             letterSpacing = 1.2.sp,
             modifier = Modifier.padding(start = 10.dp),
         )
