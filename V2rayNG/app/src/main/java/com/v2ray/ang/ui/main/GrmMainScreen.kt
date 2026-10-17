@@ -1,5 +1,6 @@
 package com.v2ray.ang.ui.main
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -22,6 +24,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -52,6 +55,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -372,9 +376,11 @@ private fun PowerButton(connected: Boolean, accent: Color, stateText: String, on
     ) {
         Box(
             modifier = Modifier
-                .size(320.dp)
+                .widthIn(max = 360.dp)
+                .fillMaxWidth()
+                .aspectRatio(HERO_ASPECT)
                 .drawBehind {
-                    val radius = size.width * 0.72f
+                    val radius = size.maxDimension * 0.8f
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(accent.copy(alpha = 0.38f), Color.Transparent),
@@ -391,10 +397,20 @@ private fun PowerButton(connected: Boolean, accent: Color, stateText: String, on
                 }
                 .clickable(role = Role.Button, onClickLabel = description, onClick = onClick),
         ) {
-            GrmPowerRing(connected = connected, modifier = Modifier.fillMaxSize())
+            Crossfade(targetState = connected, animationSpec = tween(durationMillis = 500), label = "heroPicture") { on ->
+                Image(
+                    painter = painterResource(if (on) R.drawable.grm_hero_on else R.drawable.grm_hero_off),
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
         }
     }
 }
+
+/** Width to height of res/drawable-nodpi/grm_hero_on.webp and grm_hero_off.webp (870 x 852 px). */
+private const val HERO_ASPECT = 870f / 852f
 
 @Composable
 private fun StatusBlock(
